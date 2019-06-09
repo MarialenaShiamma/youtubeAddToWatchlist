@@ -6,8 +6,8 @@
 - install Selenium using pip:
 `C:\Users\Marialena\AppData\Local\Programs\Python\Python37-32\Scripts> .\pip install --upgrade pip`
 `.\pip install selenium`
-- add your youtube password in a environmental variable with the name "YOUTUBE_PASSWORD"
-- add your youtube email address in another environmental variable with the name "YOUTUBE_EMAIL"
+- add your youtube password in a environmental variable with the name "`YOUTUBE_PASSWORD`"
+- add your youtube email address in another environmental variable with the name "`YOUTUBE_EMAIL`"
 - after adding the variables make sure you will close and open again the terminal or editor you will execute the script from
 - you should specify in the if statement at line 141 the conditions you want to add videos for. In my case the conditions were:
 any video or entertainment company that contains a korean character
@@ -20,4 +20,4 @@ any video that doesnt contains a list of words: clip, behind the scene, performa
 ## To execute
 - open terminal
 - navigate to folder of project    
-- python .\add_to_watchlist.py   
+- `python .\add_to_watchlist.py`
