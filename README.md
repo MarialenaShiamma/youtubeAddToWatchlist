@@ -12,9 +12,9 @@
 - you should specify in the if statement at line 141 the conditions you want to add videos for. In my case the conditions were:
 any video or entertainment company that contains a korean character
 any video that doesnt contains a list of words: clip, behind the scene, performance, stage, practice, cam, instrumental, choreography, backstage, tv, preview, ep
+- download [the ChromeDriver version for your operating system](http://chromedriver.chromium.org/downloads), unzip the executable, and place it in this folder
 
 ## Note
-- in case of any error with the driver, download again chrome driver from: http://chromedriver.chromium.org/downloads
 - the script runs twice each time, you can stop it the second time by pressing Ctrl + Z
 
 ## To execute
