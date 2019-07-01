@@ -34,7 +34,7 @@ class YoutubeList():
         self.add_to_watchlist()
 
         # quit browser
-        self.browser.quit()
+        #self.browser.quit()
 
     # login to YouTube
     def login(self):
@@ -194,6 +194,9 @@ class YoutubeList():
                                     # add video in watchlist
                                     v.find_element_by_xpath(
                                         "//ytd-thumbnail-overlay-toggle-button-renderer[contains(@aria-label, 'Watch later')]").click()
+                                
+                                    # wait before proceeding
+                                    sleep(1)
                                 except:
 
                                     continue
