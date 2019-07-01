@@ -34,7 +34,7 @@ class YoutubeList():
         self.add_to_watchlist()
 
         # quit browser
-        #self.browser.quit()
+        self.browser.quit()
 
     # login to YouTube
     def login(self):
