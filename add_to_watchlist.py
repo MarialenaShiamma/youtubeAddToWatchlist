@@ -155,9 +155,11 @@ class YoutubeList():
                     video_company_title = v.find_elements_by_class_name(
                         "yt-simple-endpoint")[2].text
 
+                    # words we dont want to be included in title / company
+                    unwanted_text = ['jtbc entertainment', 'jtbc drama', 'tvn drama', 'trailer', 'mbcentertainment', 'music bank', 'mcountdown', 'making film', 'vlog', 'asmr', 'clip', 'teaser', 'music bank', 'ep.', 'running man', '[hot]', 'behind the scene', 'performance', 'stage', 'practice', 'cam', 'instrumental', 'backstage', 'choreography', 'preview', 'inkigayo', 'dance cover']
+
                     # check if it contains korean characters and doesnt contain the words:
-                    # performance, instrumental, behind the scenes, teaser, clip, music bank, stage, practice, cam, backstage, choreography, tv, preview, ep., e., running man, hot, inkigayo, dance cover
-                    if (any([re.search(u'[\u3131-\ucb4c]', x) for x in video_title.lower()]) or any([re.search(u'[\u3131-\ucb4c]', x) for x in video_company_title.lower()])) and video_company_title.lower().find('jtbc entertainment') == -1 and video_company_title.lower().find('tvn drama') == -1 and video_company_title.lower().find('mbcentertainment') == -1 and video_title.lower().find('clip') == -1 and video_title.lower().find('teaser') == -1 and video_title.lower().find('music bank') == -1  and video_title.lower().find('behind the scene') == -1 and video_title.lower().find('performance') == -1 and video_title.lower().find('stage') == -1 and video_title.lower().find('practice') == -1 and video_title.lower().find('cam') == -1 and video_title.lower().find('instrumental') == -1 and video_title.lower().find('backstage') == -1 and video_title.lower().find('choreography') == -1 and video_title.lower().find('preview') == -1 and video_title.lower().find('ep.') == -1  and video_title.lower().find('running man') == -1 and video_title.lower().find('[hot]') == -1  and video_title.lower().find('inkigayo') == -1 and video_title.lower().find('dance cover') == -1:
+                    if (any([re.search(u'[\u3131-\ucb4c]', x) for x in video_title]) or any([re.search(u'[\u3131-\ucb4c]', x) for x in video_company_title])) and len([el for el in unwanted_text if el in video_company_title.lower()]) < 1 and  len([el for el in unwanted_text if el in video_title.lower()]) < 1 :
 
                         # print("TITLE: " + video_title.lower())
                         # print("COMPANY: " + video_company_title.lower())

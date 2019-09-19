@@ -11,7 +11,7 @@
 - after adding the variables make sure you will close and open again the terminal or editor you will execute the script from
 - you should specify in the if statement at line 141 the conditions you want to add videos for. In my case the conditions were:
 any video or entertainment company that contains a korean character
-any video that doesnt contains a list of words: clip, behind the scene, performance, stage, practice, cam, instrumental, choreography, backstage, tv, preview, ep
+any video that doesnt contains a list of words such as clip, behind the scene, performance etc
 - download [the ChromeDriver version for your operating system](http://chromedriver.chromium.org/downloads), unzip the executable, and place it in this folder
 
 ## Note
