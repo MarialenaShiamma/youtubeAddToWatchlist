@@ -85,7 +85,7 @@ class YoutubeList():
             pass
 
         # scroll until there are no more videos in the homepage of youtube
-        # homepage is around 17-18 scrolls from the bottom of the page
+        # homepage is around 17-20 scrolls from the bottom of the page
         # tried to check for the loader that appears with every scroll to avoid using the hardcoded value, but the loader does not always appear in decent networks
         i = 0
         while i <= 20:
@@ -112,7 +112,7 @@ class YoutubeList():
 
         # get all video containers
         videos = self.browser.find_elements_by_tag_name(
-            "ytd-grid-video-renderer")
+            "ytd-rich-grid-video-renderer")
 
         # loop all videos
         for v in videos:
@@ -120,8 +120,8 @@ class YoutubeList():
             try:
 
                 # get time of the video
-                time_vid = v.find_element_by_class_name(
-                    "ytd-thumbnail-overlay-time-status-renderer")
+                time_vid = v.find_element_by_css_selector(
+                    "#overlays > ytd-thumbnail-overlay-time-status-renderer > span")
 
                 try:
 
@@ -140,8 +140,11 @@ class YoutubeList():
                         time_vid_min = time_vid.text.split(':')[0]
                         time_vid_sec = time_vid.text.split(':')[1]
 
+                        # print("min sec " + time_vid_min + ':' + time_vid_sec  + '\n')
+
                         a = datetime.time(
                             0, int(time_vid_min), int(time_vid_sec))
+
                     except IndexError:
 
                         continue
@@ -156,7 +159,7 @@ class YoutubeList():
                         "yt-simple-endpoint")[2].text
 
                     # words we dont want to be included in title / company
-                    unwanted_text = ['jtbc entertainment', 'jtbc drama', 'tvn drama', 'trailer', 'mbcentertainment', 'music bank', 'mcountdown', 'making film', 'vlog', 'asmr', 'clip', 'teaser', 'music bank', 'ep.', 'running man', '[hot]', 'behind the scene', 'performance', 'stage', 'practice', 'cam', 'instrumental', 'backstage', 'choreography', 'preview', 'inkigayo', 'dance cover']
+                    unwanted_text = ['mbcnews', 'mnet k-pop', 'mnet official', 'ytn news', 'jtbc entertainment', 'jtbc drama', 'tvn drama', 'trailer', 'mbcentertainment', 'music bank', 'mcountdown', 'making film', 'vlog', 'asmr', 'clip', 'teaser', 'medley', 'music bank', 'ep.', 'running man', '[hot]', 'behind the scene', 'performance', 'stage', 'practice', 'cam', 'instrumental', 'backstage', 'choreography', 'preview', 'inkigayo', 'dance cover']
 
                     # check if it contains korean characters and doesnt contain the words:
                     if (any([re.search(u'[\u3131-\ucb4c]', x) for x in video_title]) or any([re.search(u'[\u3131-\ucb4c]', x) for x in video_company_title])) and len([el for el in unwanted_text if el in video_company_title.lower()]) < 1 and  len([el for el in unwanted_text if el in video_title.lower()]) < 1 :
@@ -175,7 +178,7 @@ class YoutubeList():
                             # hover on element
                             hover = ActionChains(
                                 self.browser).move_to_element(v)
-                            hover.perform()
+                            hover.perform() 
 
                             # check if already in watchlist
                             try:
