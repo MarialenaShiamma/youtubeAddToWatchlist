@@ -155,17 +155,16 @@ class YoutubeList():
                     # extract video title and entertainment company
                     video_title = v.find_element_by_id(
                         "video-title").text
-                    video_company_title = v.find_elements_by_class_name(
-                        "yt-simple-endpoint")[2].text
+                    video_company_title = v.find_element_by_id( 
+                        "channel-name").text
 
                     # words we dont want to be included in title / company
-                    unwanted_text = ['mbcnews', 'mnet k-pop', 'mnet official', 'ytn news', 'jtbc entertainment', 'jtbc drama', 'tvn drama', 'trailer', 'mbcentertainment', 'music bank', 'mcountdown', 'making film', 'vlog', 'asmr', 'clip', 'teaser', 'medley', 'music bank', 'ep.', 'running man', '[hot]', 'behind the scene', 'performance', 'stage', 'practice', 'cam', 'instrumental', 'backstage', 'choreography', 'preview', 'inkigayo', 'dance cover']
+                    unwanted_text = ['traveler', 'tv', 'news', 'chosun', 'sbs', '1thek official', 'ytn', 'jtbc', 'trailer', 'music bank', 'mcountdown', 'making film', 'vlog', 'asmr', 'clip', 'teaser', 'medley', 'ep.', 'running man', '[hot]', 'behind the scene', 'performance', 'stage', 'practice', 'cam', 'instrumental', 'backstage', 'choreography', 'preview', 'inkigayo', 'dance cover', 'drama']
 
                     # check if it contains korean characters and doesnt contain the words:
-                    if (any([re.search(u'[\u3131-\ucb4c]', x) for x in video_title]) or any([re.search(u'[\u3131-\ucb4c]', x) for x in video_company_title])) and len([el for el in unwanted_text if el in video_company_title.lower()]) < 1 and  len([el for el in unwanted_text if el in video_title.lower()]) < 1 :
+                    if (any([re.search(u'[\u3131-\ucb4c]', x) for x in video_title]) or any([re.search(u'[\u3131-\ucb4c]', x) for x in video_company_title])) and not (any(x in video_title.lower() for x in unwanted_text) or any(x in video_company_title.lower() for x in unwanted_text)):
 
-                        # print("TITLE: " + video_title.lower())
-                        # print("COMPANY: " + video_company_title.lower())
+                        # print("GOOD: Acceptable title and company - " + video_title.lower() + " / " + video_company_title.lower())
 
                         # check if already watched
                         try:
@@ -209,13 +208,13 @@ class YoutubeList():
 
                                     continue
                     else:
-
+                        
+                        # print("BAD: no korean or not acceptable name - " + video_title + " / " + video_company_title + "\n")
                         continue
-                        #print("no korean\n")
                 else:
-
-                    continue
+                    
                     #print("wrong time\n")
+                    continue
             except:
 
                 continue
