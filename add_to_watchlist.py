@@ -159,7 +159,7 @@ class YoutubeList():
                         "channel-name").text
 
                     # words we dont want to be included in title / company
-                    unwanted_text = ['traveler', 'tv', 'news', 'chosun', 'sbs', '1thek official', 'ytn', 'jtbc', 'trailer', 'music bank', 'mcountdown', 'making film', 'vlog', 'asmr', 'clip', 'teaser', 'medley', 'ep.', 'running man', '[hot]', 'behind the scene', 'performance', 'stage', 'practice', 'cam', 'instrumental', 'backstage', 'choreography', 'preview', 'inkigayo', 'dance cover', 'drama']
+                    unwanted_text = ['traveler', 'tv', 'news', 'mbclife', 'top daily', 'chosun', 'gems', 'kbs entertain', 'mbcentertainment', 'sbs', '1thek official', 'ytn', 'jtbc', 'trailer', 'music bank', 'mcountdown', 'making film', 'vlog', 'asmr', 'clip', 'teaser', 'medley', 'ep.', 'running man', '[hot]', 'behind the scene', 'performance', 'stage', 'practice', 'cam', 'instrumental', 'backstage', 'choreography', 'preview', 'inkigayo', 'dance cover', 'drama']
 
                     # check if it contains korean characters and doesnt contain the words:
                     if (any([re.search(u'[\u3131-\ucb4c]', x) for x in video_title]) or any([re.search(u'[\u3131-\ucb4c]', x) for x in video_company_title])) and not (any(x in video_title.lower() for x in unwanted_text) or any(x in video_company_title.lower() for x in unwanted_text)):
