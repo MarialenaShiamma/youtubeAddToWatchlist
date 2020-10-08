@@ -27,8 +27,17 @@ class YoutubeList():
         # Sleep to give the browser time to render and finish any animations
         sleep(2)
 
+        # Close popup that may open right after you open youtube for the first time
+        login_or_not = False  
+        try:
+            self.browser.find_element_by_class_name("ytd-popup-container")
+            self.browser.find_element_by_css_selector("#action-button > yt-button-renderer").click()
+            login_or_not = True
+        except Exception:
+            pass      
+
         # sign in
-        self.login()
+        self.login(login_or_not)
 
         # add videos in watchlist
         self.add_to_watchlist()
@@ -37,14 +46,16 @@ class YoutubeList():
         self.browser.quit()
 
     # login to YouTube
-    def login(self):
+    def login(self, login_or_not):
 
-        # locate the login button
-        login_button = self.browser.find_element_by_xpath(
-            "//paper-button[@aria-label='Sign in']")
-        login_button.click()
+        # skip login click if already clicked 
+        if not login_or_not:
 
-        sleep(2)
+            # locate the login button
+            login_button = self.browser.find_element_by_xpath("//paper-button[@aria-label='Sign in']")
+            login_button.click()
+
+            sleep(2)
 
         # get email and set to email input box
         email = self.browser.find_element_by_id("identifierId")
