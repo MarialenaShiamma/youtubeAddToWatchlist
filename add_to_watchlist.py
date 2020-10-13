@@ -99,7 +99,7 @@ class YoutubeList():
         # homepage is around 17-20 scrolls from the bottom of the page
         # tried to check for the loader that appears with every scroll to avoid using the hardcoded value, but the loader does not always appear in decent networks
         i = 0
-        while i <= 20:
+        while i <= 30:
 
             try:
 
@@ -123,7 +123,7 @@ class YoutubeList():
 
         # get all video containers
         videos = self.browser.find_elements_by_tag_name(
-            "ytd-rich-grid-video-renderer")
+            "ytd-rich-grid-media")
 
         # loop all videos
         for v in videos:
