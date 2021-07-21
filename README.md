@@ -6,6 +6,8 @@
 - install Selenium using pip:
 `C:\Users\Marialena\AppData\Local\Programs\Python\Python37-32\Scripts> .\pip install --upgrade pip`
 `.\pip install selenium`
+- install the alternative untreacable browser:
+`pip install undetected_chromedriver`
 - add your youtube password in a environmental variable with the name "`YOUTUBE_PASSWORD`"
 - add your youtube email address in another environmental variable with the name "`YOUTUBE_EMAIL`"
 - after adding the variables make sure you will close and open again the terminal or editor you will execute the script from

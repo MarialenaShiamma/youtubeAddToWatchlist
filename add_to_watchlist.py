@@ -10,28 +10,77 @@ from selenium.webdriver import ActionChains
 from selenium.webdriver.common.keys import Keys
 from selenium.webdriver import Chrome
 from selenium.webdriver.chrome.options import Options
-
+from selenium import webdriver
+from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
+import undetected_chromedriver.v2 as uc
 
 class YoutubeList():
 
     # initialise the script
     def __init__(self):
 
-        #  specify selenium driver - in a similar way you can use firefox
-        opts = Options()
-        opts.add_argument("--start-maximized")
-        # opts.set_headless() # this will keep the browser closed when the script will be executed
-        self.browser = Chrome(options=opts)
+        # # specify selenium driver (chromedriver)
+        # # opts = Options()
+        # # opts.add_argument("--start-maximized")
+        # # opts.add_argument("--headless")
+        # # opts.add_argument('--disable-gpu')
+        # # opts.add_argument('window-size=100x100')
+        # # opts.add_argument("user-data-dir=C:\\Users\\MShiamma\\AppData\\Local\\Google\\Chrome\\User Data\\Profile 2")
+        # # opts.set_headless() # this will keep the browser closed when the script will be executed
+        # # self.browser = Chrome(options=opts)
+        
+        # opts = webdriver.ChromeOptions()
+        # # opts.add_argument('window-size=1920x1080')
+        # # opts.add_argument(r"--user-data-dir=C:/Users/MShiamma/AppData/Local/Google/Chrome/User Data/Profile 2")
+        # # opts.add_argument(r"--profile-directory=Profile 2") # or Profile 2
+        # opts.add_experimental_option("excludeSwitches", ["enable-automation"])
+        # opts.add_argument('--incognito')
+        # opts.add_argument('--disable-blink-features')
+        # opts.add_argument('--disable-blink-features=AutomationControlled')
+        # opts.add_experimental_option('useAutomationExtension', False)
+        # self.browser = webdriver.Chrome(chrome_options=opts)
+        
+        # # # gecko driver - firefox
+        # # geckodr = r'C:\\Users\\MShiamma\\Desktop\\VS Code\\youtubeAddToWatchlist\\geckodriver.exe'
+        # # self.browser = webdriver.Firefox()
+
+        chrome_options = uc.ChromeOptions()
+
+        chrome_options.add_argument("--disable-extensions")
+        chrome_options.add_argument("--disable-popup-blocking")
+        chrome_options.add_argument("--profile-directory=Default")
+        # chrome_options.add_argument("--ignore-certificate-errors")
+        chrome_options.add_argument("--disable-plugins-discovery")
+        chrome_options.add_argument("--incognito")
+        chrome_options.add_argument("user_agent=DN")
+
+        self.browser = uc.Chrome(options=chrome_options)
+        self.browser.delete_all_cookies()
+
+        # self.browser.get('http://stackoverflow.com/')
+
+        # sleep(2)
+
+        # self.browser.find_element_by_class_name('login-link').click()
+        # sleep(2)
+
+        # self.browser.find_element_by_class_name('s-btn__google').click()
+
         self.browser.get('http://youtube.com')
 
         # Sleep to give the browser time to render and finish any animations
-        sleep(2)
+        sleep(4)
 
         # Close popup that may open right after you open youtube for the first time
         login_or_not = False  
         try:
-            self.browser.find_element_by_class_name("ytd-popup-container")
-            self.browser.find_element_by_css_selector("#action-button > yt-button-renderer").click()
+            # old popup
+            # self.browser.find_element_by_class_name("ytd-popup-container")
+            # self.browser.find_element_by_css_selector("#action-button > yt-button-renderer").click()
+
+            # new popup about cookies
+            login_button = self.browser.find_element_by_xpath("//a[@aria-label='Sign in']") 
+            login_button.click()
             login_or_not = True
         except Exception:
             pass      
@@ -61,6 +110,7 @@ class YoutubeList():
         email = self.browser.find_element_by_id("identifierId")
         myemail = os.environ.get('YOUTUBE_EMAIL')
         email.send_keys(myemail)
+        sleep(2)
 
         # click next button
         email_next_button = self.browser.find_element_by_id("identifierNext")
@@ -72,12 +122,18 @@ class YoutubeList():
         password = self.browser.find_element_by_name("password")
         mypassword = os.environ.get('YOUTUBE_PASSWORD')
         password.send_keys(mypassword)
+        sleep(2)
 
         # click next button to log in
         pass_next_button = self.browser.find_element_by_id("passwordNext")
         pass_next_button.click()
+        sleep(2)
 
-        sleep(3)
+        try:
+            self.browser.find_element_by_xpath("//*[contains(text(),'Confirm')]").click()
+            sleep(3)
+        except:
+            pass
 
     # add unwatched videos to watchlist
     def add_to_watchlist(self):
@@ -170,7 +226,7 @@ class YoutubeList():
                         "channel-name").text
 
                     # words we dont want to be included in title / company
-                    unwanted_text = ['traveler', 'tv', 'news', 'mbclife', 'top daily', 'chosun', 'gems', 'kbs entertain', 'mbcentertainment', 'sbs', '1thek official', 'ytn', 'jtbc', 'trailer', 'music bank', 'mcountdown', 'making film', 'vlog', 'asmr', 'clip', 'teaser', 'medley', 'ep.', 'running man', '[hot]', 'behind the scene', 'performance', 'stage', 'practice', 'cam', 'instrumental', 'backstage', 'choreography', 'preview', 'inkigayo', 'dance cover', 'drama']
+                    unwanted_text = ['delicious day' , 'reaction' , 'netflix' , 'traveler', 'tv', 'news', 'mbclife', 'top daily', 'chosun', 'gems', 'kbs entertain', 'mbcentertainment', 'sbs', '1thek official', 'ytn', 'jtbc', 'trailer', 'music bank', 'mcountdown', 'making film', 'vlog', 'asmr', 'clip', 'teaser', 'medley', 'ep.', 'running man', '[hot]', 'behind the scene', 'performance', 'stage', 'practice', 'cam', 'instrumental', 'backstage', 'choreography', 'preview', 'inkigayo', 'dance cover', 'drama']
 
                     # check if it contains korean characters and doesnt contain the words:
                     if (any([re.search(u'[\u3131-\ucb4c]', x) for x in video_title]) or any([re.search(u'[\u3131-\ucb4c]', x) for x in video_company_title])) and not (any(x in video_title.lower() for x in unwanted_text) or any(x in video_company_title.lower() for x in unwanted_text)):
