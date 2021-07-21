@@ -19,7 +19,7 @@ class YoutubeList():
     # initialise the script
     def __init__(self):
 
-        # # specify selenium driver (chromedriver)
+        # # specify selenium driver (chromedriver) - traceable driver by google
         # # opts = Options()
         # # opts.add_argument("--start-maximized")
         # # opts.add_argument("--headless")
@@ -29,42 +29,17 @@ class YoutubeList():
         # # opts.set_headless() # this will keep the browser closed when the script will be executed
         # # self.browser = Chrome(options=opts)
         
-        # opts = webdriver.ChromeOptions()
-        # # opts.add_argument('window-size=1920x1080')
-        # # opts.add_argument(r"--user-data-dir=C:/Users/MShiamma/AppData/Local/Google/Chrome/User Data/Profile 2")
-        # # opts.add_argument(r"--profile-directory=Profile 2") # or Profile 2
-        # opts.add_experimental_option("excludeSwitches", ["enable-automation"])
-        # opts.add_argument('--incognito')
-        # opts.add_argument('--disable-blink-features')
-        # opts.add_argument('--disable-blink-features=AutomationControlled')
-        # opts.add_experimental_option('useAutomationExtension', False)
-        # self.browser = webdriver.Chrome(chrome_options=opts)
-        
-        # # # gecko driver - firefox
-        # # geckodr = r'C:\\Users\\MShiamma\\Desktop\\VS Code\\youtubeAddToWatchlist\\geckodriver.exe'
-        # # self.browser = webdriver.Firefox()
-
+        # not traceable driver by google
         chrome_options = uc.ChromeOptions()
-
         chrome_options.add_argument("--disable-extensions")
         chrome_options.add_argument("--disable-popup-blocking")
         chrome_options.add_argument("--profile-directory=Default")
-        # chrome_options.add_argument("--ignore-certificate-errors")
         chrome_options.add_argument("--disable-plugins-discovery")
         chrome_options.add_argument("--incognito")
         chrome_options.add_argument("user_agent=DN")
 
         self.browser = uc.Chrome(options=chrome_options)
         self.browser.delete_all_cookies()
-
-        # self.browser.get('http://stackoverflow.com/')
-
-        # sleep(2)
-
-        # self.browser.find_element_by_class_name('login-link').click()
-        # sleep(2)
-
-        # self.browser.find_element_by_class_name('s-btn__google').click()
 
         self.browser.get('http://youtube.com')
 
@@ -130,6 +105,7 @@ class YoutubeList():
         sleep(2)
 
         try:
+            # confirm phone if appears otherwise proceed
             self.browser.find_element_by_xpath("//*[contains(text(),'Confirm')]").click()
             sleep(3)
         except:
