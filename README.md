@@ -11,7 +11,7 @@
 - add your youtube password in a environmental variable with the name "`YOUTUBE_PASSWORD`"
 - add your youtube email address in another environmental variable with the name "`YOUTUBE_EMAIL`"
 - after adding the variables make sure you will close and open again the terminal or editor you will execute the script from
-- you should specify in the if statement at line 141 the conditions you want to add videos for. In my case the conditions were:
+- you should specify in the if statement at line 205 the conditions you want to add videos for. In my case the conditions were:
 any video or entertainment company that contains a korean character
 any video that doesnt contains a list of words such as clip, behind the scene, performance etc
 - download [the ChromeDriver version for your operating system](http://chromedriver.chromium.org/downloads), unzip the executable, and place it in this folder
