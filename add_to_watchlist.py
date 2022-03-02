@@ -14,6 +14,7 @@ from selenium import webdriver
 from selenium.webdriver.firefox.firefox_binary import FirefoxBinary
 import undetected_chromedriver.v2 as uc
 
+
 class YoutubeList():
 
     # initialise the script
@@ -28,7 +29,7 @@ class YoutubeList():
         # # opts.add_argument("user-data-dir=C:\\Users\\MShiamma\\AppData\\Local\\Google\\Chrome\\User Data\\Profile 2")
         # # opts.set_headless() # this will keep the browser closed when the script will be executed
         # # self.browser = Chrome(options=opts)
-        
+
         # not traceable driver by google
         chrome_options = uc.ChromeOptions()
         chrome_options.add_argument("--disable-extensions")
@@ -36,29 +37,35 @@ class YoutubeList():
         chrome_options.add_argument("--profile-directory=Default")
         chrome_options.add_argument("--disable-plugins-discovery")
         chrome_options.add_argument("--incognito")
+        chrome_options.add_argument("--start-maximized")
+        chrome_options.add_argument("--window-size=1920,1080")
         chrome_options.add_argument("user_agent=DN")
 
-        self.browser = uc.Chrome(options=chrome_options)
+        self.browser = uc.Chrome(options=chrome_options, version_main=98)
         self.browser.delete_all_cookies()
 
         self.browser.get('http://youtube.com')
 
         # Sleep to give the browser time to render and finish any animations
-        sleep(4)
+        sleep(6)
 
         # Close popup that may open right after you open youtube for the first time
-        login_or_not = False  
+        login_or_not = False
         try:
             # old popup
             # self.browser.find_element_by_class_name("ytd-popup-container")
             # self.browser.find_element_by_css_selector("#action-button > yt-button-renderer").click()
 
             # new popup about cookies
-            login_button = self.browser.find_element_by_xpath("//a[@aria-label='Sign in']") 
+            login_button = self.browser.find_elements_by_xpath(
+                "//ytd-button-renderer[contains(@class,'signin')]")[1]
             login_button.click()
+            # print("here1")
             login_or_not = True
+            # print("here2")
+
         except Exception:
-            pass      
+            pass
 
         # sign in
         self.login(login_or_not)
@@ -72,11 +79,14 @@ class YoutubeList():
     # login to YouTube
     def login(self, login_or_not):
 
-        # skip login click if already clicked 
+        # skip login click if already clicked
         if not login_or_not:
+            sleep(2)
 
             # locate the login button
-            login_button = self.browser.find_element_by_xpath("//paper-button[@aria-label='Sign in']")
+            # login_button = WebDriverWait(self.browser, 20).until(EC.element_to_be_clickable((By.XPATH, "//*[@aria-label='Sign in']")))
+            login_button = self.browser.find_elements_by_css_selector(
+                "tp-yt-paper-button")[9]  # signin is the 9th element
             login_button.click()
 
             sleep(2)
@@ -106,7 +116,8 @@ class YoutubeList():
 
         try:
             # confirm phone if appears otherwise proceed
-            self.browser.find_element_by_xpath("//*[contains(text(),'Confirm')]").click()
+            self.browser.find_element_by_xpath(
+                "//*[contains(text(),'Confirm')]").click()
             sleep(3)
         except:
             pass
@@ -114,21 +125,21 @@ class YoutubeList():
     # add unwatched videos to watchlist
     def add_to_watchlist(self):
 
-        # open show more section
-        try:
+        # # open show more section
+        # try:
 
-            more = self.browser.find_elements_by_xpath(
-                "//paper-button[@aria-label='Show more']")
-            for m in more:
+        #     more = self.browser.find_elements_by_xpath(
+        #         "//paper-button[@aria-label='Show more']")
+        #     for m in more:
 
-                m.click()
-                sleep(3)
-        except:
+        #         m.click()
+        #         sleep(3)
+        # except:
 
-            pass
+        #     pass
 
         # scroll until there are no more videos in the homepage of youtube
-        # homepage is around 17-20 scrolls from the bottom of the page
+        # homepage is around 20-30 scrolls from the bottom of the page
         # tried to check for the loader that appears with every scroll to avoid using the hardcoded value, but the loader does not always appear in decent networks
         i = 0
         while i <= 30:
@@ -142,14 +153,17 @@ class YoutubeList():
                 act.send_keys(Keys.PAGE_DOWN).perform()
 
                 # allow some time for the videos to get loaded
-                sleep(5)
+                # sleep(1)
 
                 # proceed to next page with videos
                 i = i + 1
             except:
 
                 continue
-   
+
+        self.logic()  # call logic before scrolling
+
+    def logic(self):
         # set time format
         FMT = '%H:%M:%S'
 
@@ -198,64 +212,66 @@ class YoutubeList():
                     # extract video title and entertainment company
                     video_title = v.find_element_by_id(
                         "video-title").text
-                    video_company_title = v.find_element_by_id( 
+                    video_company_title = v.find_element_by_id(
                         "channel-name").text
 
                     # words we dont want to be included in title / company
-                    unwanted_text = ['delicious day' , 'reaction' , 'netflix' , 'traveler', 'tv', 'news', 'mbclife', 'top daily', 'chosun', 'gems', 'kbs entertain', 'mbcentertainment', 'sbs', '1thek official', 'ytn', 'jtbc', 'trailer', 'music bank', 'mcountdown', 'making film', 'vlog', 'asmr', 'clip', 'teaser', 'medley', 'ep.', 'running man', '[hot]', 'behind the scene', 'performance', 'stage', 'practice', 'cam', 'instrumental', 'backstage', 'choreography', 'preview', 'inkigayo', 'dance cover', 'drama']
+                    unwanted_text = ['delicious day', 'reaction', 'netflix', 'traveler', 'tv', 'news', 'mbclife', 'top daily', 'chosun', 'gems', 'kbs entertain', 'mbcentertainment', 'sbs', '1thek official', 'ytn', 'jtbc', 'trailer', 'music bank', 'mcountdown',
+                                     'making film', 'vlog', 'asmr', 'clip', 'teaser', 'medley', 'ep.', 'running man', '[hot]', 'behind the scene', 'performance', 'stage', 'practice', 'cam', 'instrumental', 'backstage', 'choreography', 'preview', 'inkigayo', 'dance cover', 'drama']
 
                     # check if it contains korean characters and doesnt contain the words:
                     if (any([re.search(u'[\u3131-\ucb4c]', x) for x in video_title]) or any([re.search(u'[\u3131-\ucb4c]', x) for x in video_company_title])) and not (any(x in video_title.lower() for x in unwanted_text) or any(x in video_company_title.lower() for x in unwanted_text)):
 
                         # print("GOOD: Acceptable title and company - " + video_title.lower() + " / " + video_company_title.lower())
 
-                        # check if already watched
+                        # # check if already watched
+                        # try:
+
+                        #     v.find_element_by_id('progress')
+                        #     #print("already watched\n")
+                        #     continue
+                        # except Exception:
+
+                        # hover on element
+                        hover = ActionChains(
+                            self.browser).move_to_element(v)
+                        hover.perform()
+                        sleep(3)
+
+                        # check if already in watchlist
+                        # try:
+
+                        #     v.find_element_by_xpath(
+                        #         "//ytd-thumbnail-overlay-toggle-button-renderer[contains(@aria-label, 'Added')]")
+                        #     #print("already in watchlist\n")
+                        #     continue
+                        # except Exception:
+
+                        # print("Name korean -" + video_title + " OR " + video_company_title)
+                        # print("Time looks ok - " + str(time_vid) + '\n')
+
                         try:
 
-                            v.find_element_by_id('progress')
-                            #print("already watched\n")
+                            # open video options
+                            # v.find_element_by_xpath("//ytd-menu-renderer[@class='style-scope ytd-video-preview']//button[@id='button']").click()
+                            # sleep(1)
+
+                            # # add video in watchlist
+                            # v.find_element_by_xpath(
+                            #     "//yt-formatted-string[normalize-space()='Save to Watch later']").click()
+                            v.find_element_by_xpath("//ytd-toggle-button-renderer[1]//a[1]").click()  
+
+                            # wait before proceeding
+                            sleep(1)
+                        except:
+
                             continue
-                        except Exception:
-
-                            # hover on element
-                            hover = ActionChains(
-                                self.browser).move_to_element(v)
-                            hover.perform() 
-
-                            # check if already in watchlist
-                            try:
-
-                                v.find_element_by_xpath(
-                                    "//ytd-thumbnail-overlay-toggle-button-renderer[contains(@aria-label, 'Added')]")
-                                #print("already in watchlist\n")
-                                continue
-                            except Exception:
-
-                                # print("Name korean -" + video_title + " OR " + video_company_title)
-                                # print("Time looks ok - " + str(time_vid) + '\n')
-
-                                # hover on element
-                                hover = ActionChains(
-                                    self.browser).move_to_element(v)
-                                hover.perform()
-
-                                try:
-
-                                    # add video in watchlist
-                                    v.find_element_by_xpath(
-                                        "//ytd-thumbnail-overlay-toggle-button-renderer[contains(@aria-label, 'Watch later')]").click()
-                                
-                                    # wait before proceeding
-                                    sleep(1)
-                                except:
-
-                                    continue
                     else:
-                        
+
                         # print("BAD: no korean or not acceptable name - " + video_title + " / " + video_company_title + "\n")
                         continue
                 else:
-                    
+
                     #print("wrong time\n")
                     continue
             except:
