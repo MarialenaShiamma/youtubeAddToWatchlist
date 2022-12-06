@@ -2,7 +2,7 @@
 import os
 import re
 import datetime
-from time import sleep
+from time import sleep, time
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
@@ -41,7 +41,8 @@ class YoutubeList():
         chrome_options.add_argument("--window-size=1920,1080")
         chrome_options.add_argument("user_agent=DN")
 
-        self.browser = uc.Chrome(options=chrome_options, version_main=98)
+        # should add latest version of chrome here
+        self.browser = uc.Chrome(options=chrome_options, version_main=108)
         self.browser.delete_all_cookies()
 
         self.browser.get('http://youtube.com')
@@ -60,9 +61,7 @@ class YoutubeList():
             login_button = self.browser.find_elements_by_xpath(
                 "//ytd-button-renderer[contains(@class,'signin')]")[1]
             login_button.click()
-            # print("here1")
             login_or_not = True
-            # print("here2")
 
         except Exception:
             pass
@@ -70,13 +69,22 @@ class YoutubeList():
         # sign in
         self.login(login_or_not)
 
-        # add videos in watchlist
-        self.add_to_watchlist()
+        i = 0
+        while i < 2:
+            # add videos in watchlist
+            self.add_to_watchlist()
+
+            # self.browser.refresh()
+            self.browser.get('http://youtube.com')
+
+            sleep(6)
+            i = i+1
 
         # quit browser
         self.browser.quit()
 
     # login to YouTube
+
     def login(self, login_or_not):
 
         # skip login click if already clicked
@@ -104,7 +112,7 @@ class YoutubeList():
         sleep(2)
 
         # get password and set to password input box
-        password = self.browser.find_element_by_name("password")
+        password = self.browser.find_element_by_name("Passwd")
         mypassword = os.environ.get('YOUTUBE_PASSWORD')
         password.send_keys(mypassword)
         sleep(2)
@@ -112,17 +120,18 @@ class YoutubeList():
         # click next button to log in
         pass_next_button = self.browser.find_element_by_id("passwordNext")
         pass_next_button.click()
-        sleep(2)
+        sleep(20)
 
-        try:
-            # confirm phone if appears otherwise proceed
-            self.browser.find_element_by_xpath(
-                "//*[contains(text(),'Confirm')]").click()
-            sleep(3)
-        except:
-            pass
+        # try:
+        #     # confirm phone if appears otherwise proceed
+        #     self.browser.find_element_by_xpath(
+        #         "//*[contains(text(),'Confirm')]").click()
+        #     sleep(3)
+        # except:
+        #     pass
 
     # add unwatched videos to watchlist
+
     def add_to_watchlist(self):
 
         # # open show more section
@@ -153,13 +162,16 @@ class YoutubeList():
                 act.send_keys(Keys.PAGE_DOWN).perform()
 
                 # allow some time for the videos to get loaded
-                # sleep(1)
+                sleep(0.5)
 
                 # proceed to next page with videos
                 i = i + 1
             except:
 
                 continue
+
+        self.browser.find_element_by_tag_name('body').send_keys(
+            Keys.CONTROL + Keys.HOME)  # go at the top of the page
 
         self.logic()  # call logic before scrolling
 
@@ -217,26 +229,32 @@ class YoutubeList():
 
                     # words we dont want to be included in title / company
                     unwanted_text = ['delicious day', 'reaction', 'netflix', 'traveler', 'tv', 'news', 'mbclife', 'top daily', 'chosun', 'gems', 'kbs entertain', 'mbcentertainment', 'sbs', '1thek official', 'ytn', 'jtbc', 'trailer', 'music bank', 'mcountdown',
-                                     'making film', 'vlog', 'asmr', 'clip', 'teaser', 'medley', 'ep.', 'running man', '[hot]', 'behind the scene', 'performance', 'stage', 'practice', 'cam', 'instrumental', 'backstage', 'choreography', 'preview', 'inkigayo', 'dance cover', 'drama']
+                                     'making film', 'cook', 'kitchen', 'table diary', 'vlog', 'asmr', 'clip', 'teaser', 'medley', 'ep.', 'running man', '[hot]', 'behind the scene', 'performance', 'practice', 'cam', 'instrumental', 'backstage', 'choreography', 'preview', 'inkigayo', 'dance cover']
 
                     # check if it contains korean characters and doesnt contain the words:
                     if (any([re.search(u'[\u3131-\ucb4c]', x) for x in video_title]) or any([re.search(u'[\u3131-\ucb4c]', x) for x in video_company_title])) and not (any(x in video_title.lower() for x in unwanted_text) or any(x in video_company_title.lower() for x in unwanted_text)):
 
                         # print("GOOD: Acceptable title and company - " + video_title.lower() + " / " + video_company_title.lower())
 
-                        # # check if already watched
-                        # try:
+                        # check if already watched
+                        try:
 
-                        #     v.find_element_by_id('progress')
-                        #     #print("already watched\n")
-                        #     continue
-                        # except Exception:
+                            v.find_element_by_id('progress')
+                            continue
+                        except Exception:
+                            pass
 
-                        # hover on element
-                        hover = ActionChains(
-                            self.browser).move_to_element(v)
-                        hover.perform()
-                        sleep(3)
+                        # scroll to details section of video
+                        move = ActionChains(self.browser).move_to_element(
+                            v.find_element_by_tag_name("ytd-video-meta-block"))
+                        move.perform()
+                        sleep(2)
+
+                        # # hover on element
+                        # hover = ActionChains(
+                        #     self.browser).move_to_element(v.find_element_by_tag_name("ytd-thumbnail"))
+                        # hover.perform()
+                        # sleep(6)
 
                         # check if already in watchlist
                         # try:
@@ -252,14 +270,17 @@ class YoutubeList():
 
                         try:
 
-                            # open video options
-                            # v.find_element_by_xpath("//ytd-menu-renderer[@class='style-scope ytd-video-preview']//button[@id='button']").click()
-                            # sleep(1)
-
-                            # # add video in watchlist
+                            # add video in watchlist
                             # v.find_element_by_xpath(
-                            #     "//yt-formatted-string[normalize-space()='Save to Watch later']").click()
-                            v.find_element_by_xpath("//ytd-toggle-button-renderer[1]//a[1]").click()  
+                            #     "//button[@aria-label='Action menu']").click()
+                            v.find_element_by_tag_name(
+                                "ytd-menu-renderer").click()
+
+                            sleep(2)
+
+                            v.find_element_by_xpath(
+                                "//yt-formatted-string[normalize-space()='Save to Watch later']").click()
+                            # v.find_element_by_xpath("//span[contains(text(),'Watch later')]").click()
 
                             # wait before proceeding
                             sleep(1)
